@@ -2,27 +2,40 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const songsSlice = createSlice({
     name: 'songs',
-    initialState: [],
+    initialState:  {
+        songs: [],
+        loading: false,
+        error: null,
+    },
 
-    //reducers for fetching, adding, updating, and deleting songs
+    //Reducer for managing song data or states
     reducers: {
-        fetchSuccess(state, action) {
-            return action.payload;
+        fetchSongsRequest: (state) => {
+            state.loading = true;
+            state.error = null;
         },
-        addSong(state, action) {
-            state.push(action.payload);
+        fetchSongsSuccess: (state, action) => {
+            state.songs = action.payload;
+            state.loading = false;
         },
-        updateSong(state, action) {
-            const index = state.findIndex(song => song.id === action.payload.id);
+        fetchSongsFailure: (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        },
+        addSong: (state, action) => {
+            state.songs.push(action.payload);
+        },
+        updateSong: (state, action) => {
+            const index = state.songs.findIndex(song => song.id === action.payload.id);
             if (index !== -1) {
-                state[index] = action.payload;
+                state.songs[index] = action.payload;
             }
         },
-        deleteSong(state, action) {
-            return state.filter(song => song.id !== action.payload.id);
+        deleteSong: (state, action) => {
+            state.songs = state.songs.filter(song => song.id !== action.payload);
         },
     },
-}); 
+});
 
-export const { fetchSuccess, addSong, updateSong, deleteSong } = songsSlice.actions;
+export const { fetchSongsRequest, fetchSongsSuccess, fetchSongsFailure, addSong, updateSong, deleteSong } = songsSlice.actions;
 export default songsSlice.reducer;
